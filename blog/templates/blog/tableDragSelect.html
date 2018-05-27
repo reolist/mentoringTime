@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    th, td {
+    color: black;
+    padding: 10px 17px;
+    text-align: center;
+    font-size: 16px;
+    }
+</style>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+var timeTable = new Array(14);
+for(var i = 0; i<14; i++){
+	timeTable[i] = new Array(8);
+	for(var j = 0; j<8; j++){
+		timeTable[i][j] = 0;
+	}
+}
+	
+var dragchkstat = "off";
+function dragchkNOOP() {
+	return false; } 
+function dragchkOnMouseDown(trindex, tdindex) {
+		var table = document.getElementById("myTable");
+		console.log(trindex, tdindex);
+        if (timeTable[trindex][tdindex]) { 
+        	dragchkstat = "uncheck";
+			
+			timeTable[trindex][tdindex] = 0;
+			table.rows[trindex].cells[tdindex].bgColor = "white"
+        } else {
+			dragchkstat = "check";
+			timeTable[trindex][tdindex] = 1;
+			table.rows[trindex].cells[tdindex].bgColor = "blue"
+        } 
+        return false; 
+} 
+function dragchkOnMouseOver(trindex, tdindex) {
+		console.log(trindex, tdindex);
+		var table = document.getElementById("myTable");
+		
+        switch (dragchkstat) {
+                case "off": 
+                        break; 
+                case "check": 
+                        this.focus();
+						timeTable[trindex][tdindex] = 1;
+				table.rows[trindex].cells[tdindex].bgColor = "blue"
+						break; 
+                case "uncheck": 
+                        timeTable[trindex][tdindex] = 0;
+				table.rows[trindex].cells[tdindex].bgColor = "white"
+						break; 
+        } 
+        return false; 
+} 
+function dragchkOnMouseUp() { dragchkstat = "off"; return true; }
+	
+function clickHere(){
+	var table = document.getElementById("myTable");
+	var row ;
+	var cell;
+	var day = ["","월요일","화요일","수요일","목요일","금요일","토요일","일요일"];
+	for(var i=0;i<14;i++){
+	  row = table.insertRow(i);
+	  for(var j=0;j<8;j++){
+		cell = row.insertCell(j);
+		if(i == 0){
+			cell.innerHTML = day[j];
+		}else if(j == 0){
+			cell.innerHTML = i + "교시";
+		}
+		cell.onclick = function(){
+			var tdindex = this.cellIndex+1;
+			var trindex = $('tr').index($(this).parent())+1;
+			if(tdindex == 1 || trindex == 1){
+				return false;
+			}
+			//alert("Row : " + trindex + "  Column : " + tdindex);
+			dragchkNOOP();
+			console.log(timeTable);
+			
+		};
+		cell.onmouseover = function(){
+			var tdindex = this.cellIndex;
+			var trindex = $('tr').index($(this).parent());
+			if(tdindex == 0 || trindex == 0){
+				return false;
+			}
+			dragchkOnMouseOver(trindex, tdindex);
+			console.log(timeTable);
+		};
+		cell.onmouseup = function(){
+			
+			dragchkOnMouseUp();
+			console.log(timeTable);
+		};
+		cell.onmousedown = function(){
+			var tdindex = this.cellIndex;
+			var trindex = $('tr').index($(this).parent());
+			if(tdindex == 0 || trindex == 0){
+				return false;
+			}
+			dragchkOnMouseDown(trindex, tdindex);
+			console.log(timeTable);
+		};
+	  }
+	}
+	
+	
+}
+	
+</script>
+</head>
+
+<body onload="clickHere()">
+ <table id = "myTable" border="1"></table>
+	<br>
+ <table id = "timeTable" border="1"></table>
+	
+</body>
+</html>
